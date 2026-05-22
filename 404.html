@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Color View</title>
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #000000; /* Цвет по умолчанию */
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            font-family: sans-serif;
+            overflow: hidden;
+        }
+
+        /* Контейнер для "картинки" */
+        .image-container {
+            position: relative;
+            width: 128px;
+            height: 128px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.5);
+            /* Граница, чтобы видеть границы квадрата на похожем фоне */
+            border: 1px solid rgba(255,255,255,0.1); 
+        }
+
+        /* Сам цветной квадрат */
+        #colorSquare {
+            width: 100%;
+            height: 100%;
+            background-color: inherit; /* Наследует цвет body */
+        }
+
+        .info {
+            margin-top: 20px;
+            color: rgba(255,255,255,0.7);
+            font-size: 14px;
+            text-align: center;
+        }
+        
+        a {
+            color: rgba(255,255,255,0.9);
+            text-decoration: none;
+            border-bottom: 1px dotted rgba(255,255,255,0.5);
+        }
+        a:hover {
+            color: #fff;
+            border-bottom: 1px solid #fff;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Визуальная имитация картинки 128x128 -->
+    <div class="image-container">
+        <div id="colorSquare"></div>
+    </div>
+
+    <div class="info">
+        Color: <span id="hexCode">#------</span><br><br>
+        <a href="/">← Вернуться на главную</a>
+    </div>
+
+    <script>
+        // Получаем путь (например, "/repo-name/111111")
+        const path = window.location.pathname;
+        
+        // Разбиваем путь по слэшам и берем последнюю часть
+        const parts = path.split('/');
+        let hexCode = parts[parts.length - 1];
+
+        // Убираем возможные расширения или мусор, если есть
+        hexCode = hexCode.split('.')[0];
+
+        // Если код пустой (зашли просто в папку), ставим дефолт
+        if (!hexCode) hexCode = "000000";
+
+        // Добавляем решетку, если нет
+        if (!hexCode.startsWith('#')) {
+            hexCode = '#' + hexCode;
+        }
+
+        // Простая проверка на валидность Hex (6 символов)
+        if (/^#[0-9A-Fa-f]{6}$/.test(hexCode)) {
+            document.body.style.backgroundColor = hexCode;
+            document.getElementById('colorSquare').style.backgroundColor = hexCode;
+            document.getElementById('hexCode').innerText = hexCode.toUpperCase();
+            
+            // Меняем цвет текста для читаемости
+            adjustTextColor(hexCode);
+        } else {
+            // Если цвет неверный
+            document.getElementById('hexCode').innerText = "Invalid Color";
+        }
+
+        // Функция для контраста текста (черный или белый)
+        function adjustTextColor(hex) {
+            // Конвертируем hex в rgb
+            const r = parseInt(hex.substr(1, 2), 16);
+            const g = parseInt(hex.substr(3, 2), 16);
+            const b = parseInt(hex.substr(5, 2), 16);
+            
+            // Вычисляем яркость
+            const yiq = ((r * 299) + (g * 587) + (b * 114)) / 1000;
+            
+            // Если ярко - текст черный, если темно - белый
+            const textColor = (yiq >= 128) ? '#000000' : '#ffffff';
+            const shadow = (yiq >= 128) ? 'none' : '0 0 5px rgba(0,0,0,0.5)';
+            
+            document.querySelector('.info').style.color = textColor;
+            document.querySelector('a').style.color = textColor;
+            document.getElementById('hexCode').style.textShadow = shadow;
+        }
+    </script>
+</body>
+</html>
