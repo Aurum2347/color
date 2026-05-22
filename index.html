@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Color Generator</title>
+    <style>
+        body {
+            background-color: #121212;
+            color: #ffffff;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        h1 {
+            margin-bottom: 20px;
+            font-weight: 300;
+        }
+
+        .container {
+            background: #1e1e1e;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+            text-align: center;
+            width: 300px;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #333;
+            border-radius: 6px;
+            background: #2c2c2c;
+            color: white;
+            font-size: 16px;
+            box-sizing: border-box;
+            text-align: center;
+        }
+
+        input[type="text"]:focus {
+            outline: none;
+            border-color: #4CAF50;
+        }
+
+        button {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .btn-go {
+            background-color: #4CAF50;
+            color: white;
+        }
+        .btn-go:hover { background-color: #45a049; }
+
+        .btn-random {
+            background-color: #2196F3;
+            color: white;
+        }
+        .btn-random:hover { background-color: #0b7dda; }
+
+        .preview {
+            width: 50px;
+            height: 50px;
+            margin: 0 auto 15px auto;
+            border-radius: 50%;
+            border: 2px solid #555;
+            background-color: #333;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Color View</h1>
+        
+        <div id="previewBox" class="preview"></div>
+
+        <input type="text" id="colorInput" placeholder="#111111 или 111111" maxlength="7">
+        
+        <button class="btn-go" onclick="goToColor()">Открыть цвет</button>
+        <button class="btn-random" onclick="setRandom()">Случайный цвет</button>
+    </div>
+
+    <script>
+        const input = document.getElementById('colorInput');
+        const preview = document.getElementById('previewBox');
+
+        // Обновление превью при вводе
+        input.addEventListener('input', function() {
+            let val = this.value.replace('#', '');
+            if (val.length === 6) {
+                preview.style.backgroundColor = '#' + val;
+            } else {
+                preview.style.backgroundColor = '#333';
+            }
+        });
+
+        function goToColor() {
+            let val = input.value.replace('#', '').trim();
+            
+            // Если пусто, генерируем случайный
+            if (!val) {
+                val = Math.floor(Math.random()*16777215).toString(16).padStart(6, '0');
+            }
+
+            // Если ввели короткое (например 111), дополняем нулями или оставляем как есть?
+            // Для красоты лучше 6 символов. Если меньше - дополним нулями в конце
+            if (val.length < 6) {
+                val = val.padEnd(6, '0');
+            }
+            
+            // Перенаправление
+            window.location.href = val;
+        }
+
+        function setRandom() {
+            const randomColor = Math.floor(Math.random()*16777215).toString(16).padStart(6, '0');
+            input.value = randomColor;
+            preview.style.backgroundColor = '#' + randomColor;
+        }
+    </script>
+</body>
+</html>
